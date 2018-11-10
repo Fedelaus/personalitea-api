@@ -29,7 +29,7 @@ export default class Route {
 		}
 
 		const token = request.headers.authorization.replace('Bearer ', '');
-		
+
 		let isTokenValid; 
 		
 		try {
@@ -53,4 +53,8 @@ export interface EndpointDescription {
 	method: 'get' | 'post' | 'put';
 	authRequired: boolean;
 	funct: RequestHandler;
+}
+
+export interface Endpoint<T> {
+	(request: Request, response: Response): T;
 }

@@ -18,7 +18,7 @@ export class IngredientsProcessor extends Processor {
 	}
 
 
-	async getIngredient(app, ingredient: Ingredient) {
+	async getIngredients(app, ingredient: Ingredient) {
 		const database = app.get('database') as Client;
 
 		const query = knex({client: 'pg'})
@@ -27,6 +27,18 @@ export class IngredientsProcessor extends Processor {
 			.where(ingredient)
 			.toString();	
 
+
+		return database.query(query);
+	}
+
+	async updateIngredients(app, ingredientId: number, ingredient: Ingredient) {
+		const database = app.get('database') as Client;
+
+		const query = knex({client: 'pg'})
+			.table('ingredients')
+			.where({ id: ingredientId })
+			.update(ingredient)
+			.toString();	
 
 		return database.query(query);
 	}

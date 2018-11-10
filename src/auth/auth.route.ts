@@ -3,11 +3,12 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import Route from "../core/route/route";
-import { Router } from "../core/route/route.decorators";
+import { Router, Endpoint } from "../core/route/route.decorators";
 
 import { AuthProcessor } from "./auth.processor";
 import { User, UserToken } from "./user.description";
-import { MissingResourceError, BadAuthenticationError } from "../core/errors/error.interface";
+import { MissingResourceError, BadAuthenticationError, EmailInUseError } from "../core/errors/error.interface";
+import { StripUnknown } from "../core/route/validation.decorators";
 
 
 export class AuthRoute extends Route {
@@ -33,13 +34,6 @@ export class AuthRoute extends Route {
 			funct: this.loginUser.bind(this),
 			authRequired: false
 		});
-
-		this.registerEndpoint({
-			path: 'logout',
-			method: 'put',
-			funct: this.logoutUser.bind(this),
-			authRequired: true
-		});
 	}
 
 	async createUser(request: Request, response: Response) {
@@ -48,62 +42,40 @@ export class AuthRoute extends Route {
 		const user: User = new User(undefined, request.body.username, request.body.email, request.body.password);
 		
 		user.password = await bcrypt.hash(user.password, this.saltRounds);
-
-		try {
-			const databaseResponse = await authProcessor.createUser(request.app, user);
-
-			return response.send(databaseResponse);
+		try { 
+			return response.send(await authProcessor.createUser(request.app, user));	
 		} catch(error) {
-			return response.send(error);
-		}		
+			return (new EmailInUseError()).execute(response);
+		}
+
 	}
 
+	@StripUnknown([], ['email', 'password'])
 	async loginUser(request: Request, response: Response) {
 		const authProcessor = request.app.get('auth.processor') as AuthProcessor;
 
-		// TODO: remove this with strip request decorator.
-		const user: User = { email: request.body.email} as User;
+		const user: User = { email: request.body.email } as User;
+
+		const databaseResponse = await authProcessor.getUser(request.app, user);
+		
+		if(databaseResponse.rowCount < 1) {
+			return (new MissingResourceError(user, { email: user.email })).execute(response);
+		}
+
+		const rows = databaseResponse.rows;
+		
+		const databaseUser: User = rows[0] as User;
 
 		try {
-			const databaseResponse = await authProcessor.login(request.app, user);
-			
-			if(databaseResponse.rowCount < 1) {
-				return (new MissingResourceError(user, { email: user.email })).execute(response);
-			}
+			await bcrypt.compare(request.body.password, databaseUser.password as string);
 
-			const rows = databaseResponse.rows;
-			
-			const databaseUser: User = rows[0] as User;
+			const userJWT = await this.createUserToken(databaseUser);
 
-			const doesPasswordMatch : boolean = await bcrypt.compare(request.body.password, databaseUser.password as string);
-
-			if(doesPasswordMatch) {
-				const userJWT = await this.createUserToken(databaseUser);
-
-				return response.send({ bearer: userJWT });
-			} else {
-				return (new BadAuthenticationError()).execute(response);
-			}
-
-		} catch(error) {
-			return response.send(error);
-		}
-	}
-
-	async logoutUser(request: Request, response: Response) {
-		
-	}
-
-	async authenticateRequest(request, response, next) { 
-		const token = request.headers.authorization.replace('Bearer ', '');
-		const isTokenValid = this.verifyUserToken(token);
-
-		if(!isTokenValid) { 
-			// TODO: handle errors better
+			return response.send({ bearer: userJWT });
+		} catch {
 			return (new BadAuthenticationError()).execute(response);
 		}
 
-		next();
 	}
 
 	createUserToken(user: User): Promise<string> {

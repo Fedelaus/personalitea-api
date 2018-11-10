@@ -19,7 +19,7 @@ export class HTTPError {
 export class MissingResourceError extends HTTPError {
 	constructor(key: string | object, furtherDetails: any) {
 		if(typeof key === 'object') {
-			key = Object.keys(key).join(' & ');
+			key = Object.keys(key).join(' 	& ');
 		}
 
 		super({
@@ -43,5 +43,14 @@ export class UnauthorizedRequestError extends HTTPError {
 		super({
 			message: `Unauthorized request to route that requires authentication`
 		}, 403)
+	}
+}
+
+
+export class EmailInUseError extends HTTPError {
+	constructor() {
+		super({
+			message: `The email provided is currently in use.`
+		}, 418)
 	}
 }

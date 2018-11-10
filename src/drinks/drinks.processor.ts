@@ -7,6 +7,7 @@ import { link } from "fs";
 import { Ingredient } from "../ingredients/ingredient.interface";
 
 export class DrinksProcessor extends Processor {
+	
 	async createDrink(app: any, drink: Drink) {
 		const database = app.get('database') as Client;
 
@@ -19,6 +20,30 @@ export class DrinksProcessor extends Processor {
 		return database.query(query);
 	}
 
+	async getDrinks(app, drink: Drink) {
+		const database = app.get('database') as Client;
+
+		const query = knex({client: 'pg'})
+			.table('drinks')
+			.select('*')
+			.where(drink)
+			.toString();	
+
+		return database.query(query);
+	}
+
+	async updateDrink(app, drinkId: number, drink: Drink) {
+		const database = app.get('database') as Client;
+
+		const query = knex({client: 'pg'})
+			.table('drinks')
+			.where({ id: drinkId })
+			.update(drink)
+			.toString();	
+
+		return database.query(query);
+	}
+
 	async createIngredientLinks(app, drink_id: number, ingredient_ids: number[]) {
 		const database = app.get('database') as Client;
 
@@ -27,18 +52,6 @@ export class DrinksProcessor extends Processor {
 			.insert(ingredient_ids.map(i_id => { return { drink_id: drink_id, ingredient_id: i_id} }))
 			.returning('*')
 			.toString();
-
-		return database.query(query);
-	}
-
-	async getDrink(app, drink: Drink) {
-		const database = app.get('database') as Client;
-
-		const query = knex({client: 'pg'})
-			.table('drinks')
-			.select('*')
-			.where(drink)
-			.toString();	
 
 		return database.query(query);
 	}
