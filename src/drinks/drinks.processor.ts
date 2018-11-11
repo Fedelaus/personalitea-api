@@ -44,6 +44,18 @@ export class DrinksProcessor extends Processor {
 		return database.query(query);
 	}
 
+	async deleteDrink(app, drinkId: number) {
+		const database = app.get('database') as Client;
+
+		const query = knex({client: 'pg'})
+			.table('drinks')
+			.delete()
+			.where({ id: drinkId })
+			.toString();	
+
+		return database.query(query);
+	}
+
 	async createIngredientLinks(app, drink_id: number, ingredient_ids: number[]) {
 		const database = app.get('database') as Client;
 

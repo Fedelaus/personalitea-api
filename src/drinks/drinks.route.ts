@@ -4,7 +4,7 @@ import { Drink } from "./drink.interface";
 import { DrinksProcessor } from "./drinks.processor";
 import { IngredientsProcessor } from "../ingredients/ingredients.processor";
 import { Ingredient } from "../ingredients/ingredient.interface";
-import { StripUnknown } from "../core/route/validation.decorators";
+import { StripUnknown, Validate } from "../core/route/validation.decorators";
 
 export class DrinksRoute extends Route {
 
@@ -27,6 +27,20 @@ export class DrinksRoute extends Route {
 			path: '',
 			method: 'get',
 			funct: this.getDrink.bind(this),
+			authRequired: true
+		});
+
+		this.registerEndpoint({
+			path: ':drinkId',
+			method: 'put',
+			funct: this.updateDrink.bind(this),
+			authRequired: true
+		});
+
+		this.registerEndpoint({
+			path: ':drinkId',
+			method: 'delete',
+			funct: this.deleteDrink.bind(this),
 			authRequired: true
 		});
 
@@ -53,7 +67,7 @@ export class DrinksRoute extends Route {
 		const ingredients: number[] = request.body.ingredients;
 		
 		// Create a link for the drinks to ingredients (via the index table).
-		const insertIngredientLinks = await drinksProcessor.createIngredientLinks(app, drinkId, ingredients);
+		await drinksProcessor.createIngredientLinks(app, drinkId, ingredients);
 		// Get the full ingredient name/information to return to the client.
 		databaseDrink = await drinksProcessor.getDrinkObject(app, { id: drinkId } as Drink);
 		// Respond to the client with the full object.
@@ -64,10 +78,34 @@ export class DrinksRoute extends Route {
 	async getDrink(request: Request, response: Response) {
 		const app = request.app;
 
-		console.log(request.body);
-
 		const drinksProcessor = app.get('drinks.processor') as DrinksProcessor;
 
 		response.send(await drinksProcessor.getDrinkObject(app, request.body as Drink));
+	}
+
+	async updateDrink(request: Request, response: Response) {
+		const app = request.app;
+
+		const drinksProcessor = app.get('drinks.processor') as DrinksProcessor;
+
+		const drinkId : number = request.params.drinkId;
+
+		const updatedDrink = await drinksProcessor.updateDrink(app, drinkId, request.body as Drink);
+
+		const drink = updatedDrink.rows[0]
+
+		response.send(drink);
+	}
+
+	async deleteDrink(request: Request, response: Response) {
+		const app = request.app;
+
+		const drinksProcessor = app.get('drinks.processor') as DrinksProcessor;
+
+		const drinkId : number = request.params.drinkId;
+
+		const deletedDrink = await drinksProcessor.deleteDrink(app, drinkId);
+
+		response.send({ 'affected': deletedDrink.rowCount});
 	}
 }
