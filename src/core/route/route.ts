@@ -50,7 +50,7 @@ export default class Route {
 
 export interface EndpointDescription {
 	path: string;
-	method: 'get' | 'post' | 'put';
+	method: 'get' | 'post' | 'put' | 'delete';
 	authRequired: boolean;
 	funct: RequestHandler;
 }

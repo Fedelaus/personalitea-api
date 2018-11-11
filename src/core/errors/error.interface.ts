@@ -30,6 +30,14 @@ export class MissingResourceError extends HTTPError {
 	}
 }
 
+
+export class BadRequestError extends HTTPError {
+	constructor() {
+		super({
+			message: `Request params or body malformed or not in correct state`,
+		}, 400);
+	}
+}
 export class BadAuthenticationError extends HTTPError {
 	constructor() {
 		super({

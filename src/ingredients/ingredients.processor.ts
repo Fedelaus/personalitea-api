@@ -21,6 +21,8 @@ export class IngredientsProcessor extends Processor {
 	async getIngredients(app, ingredient: Ingredient) {
 		const database = app.get('database') as Client;
 
+		console.log(ingredient);
+
 		const query = knex({client: 'pg'})
 			.table('ingredients')
 			.select('*')
@@ -39,6 +41,20 @@ export class IngredientsProcessor extends Processor {
 			.where({ id: ingredientId })
 			.update(ingredient)
 			.toString();	
+
+		return database.query(query);
+	}
+
+	async deleteIngredient(app, ingredientId: number) {
+		const database = app.get('database') as Client;
+
+		const query = knex({client: 'pg'})
+			.table('ingredients')
+			.delete()
+			.where({ id: ingredientId })
+			.toString();
+
+		// TODO: consider the links?
 
 		return database.query(query);
 	}

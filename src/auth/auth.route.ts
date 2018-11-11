@@ -36,15 +36,18 @@ export class AuthRoute extends Route {
 		});
 	}
 
+	@StripUnknown([], ['username', 'email', 'password'])
 	async createUser(request: Request, response: Response) {
 		const authProcessor = request.app.get('auth.processor') as AuthProcessor;
 		
-		const user: User = new User(undefined, request.body.username, request.body.email, request.body.password);
+		const user: User = request.body as User;
 		
 		user.password = await bcrypt.hash(user.password, this.saltRounds);
+
 		try { 
 			return response.send(await authProcessor.createUser(request.app, user));	
 		} catch(error) {
+			// TODO: pass errors to the error handler.
 			return (new EmailInUseError()).execute(response);
 		}
 
