@@ -26,7 +26,7 @@ export class DrinksRoute extends Route {
 		this.registerEndpoint({
 			path: '',
 			method: 'get',
-			funct: this.getDrink.bind(this),
+			funct: this.getDrinks.bind(this),
 			authRequired: true
 		});
 
@@ -75,12 +75,14 @@ export class DrinksRoute extends Route {
 	}
 
 	@StripUnknown([], ['id', 'name', 'owner', 'ingredients'])
-	async getDrink(request: Request, response: Response) {
+	async getDrinks(request: Request, response: Response) {
 		const app = request.app;
 
 		const drinksProcessor = app.get('drinks.processor') as DrinksProcessor;
 
-		response.send(await drinksProcessor.getDrinkObject(app, request.body as Drink));
+		const drinks = await drinksProcessor.getDrinks(app, request.body as Drink)
+
+		response.send(drinks.rows);
 	}
 
 	async updateDrink(request: Request, response: Response) {
