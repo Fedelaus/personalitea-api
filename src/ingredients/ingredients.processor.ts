@@ -21,8 +21,6 @@ export class IngredientsProcessor extends Processor {
 	async getIngredients(app, ingredient: Ingredient) {
 		const database = app.get('database') as Client;
 
-		console.log(ingredient);
-
 		const query = knex({client: 'pg'})
 			.table('ingredients')
 			.select('*')

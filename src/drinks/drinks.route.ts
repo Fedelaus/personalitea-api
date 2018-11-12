@@ -80,11 +80,16 @@ export class DrinksRoute extends Route {
 
 		const drinksProcessor = app.get('drinks.processor') as DrinksProcessor;
 
-		const drinkQuery = { id: request.query.id, name: request.query.name, owner: request.query.owner } as Drink;
+		const drinkQuery = { 
+			id: request.query.id,
+			name: request.query.name,
+			owner: request.query.owner,
+			ingredients: request.query.ingredients
+		} as Drink;
 		
 		Object.keys(drinkQuery).forEach(k => { !drinkQuery[k] && delete drinkQuery[k] });
 
-		const drinks = await drinksProcessor.getDrinks(app, drinkQuery, request.query.ingredients);
+		const drinks = await drinksProcessor.getDrinks(app, drinkQuery);
 
 		response.send(drinks.rows);
 	}
@@ -98,7 +103,7 @@ export class DrinksRoute extends Route {
 
 		const requestDrink = { name: request.body.name } as Drink;
 
-		const updatedDrink = await drinksProcessor.updateDrink(app, drinkId, requestDrink);
+		const updatedDrink = await drinksProcessor.updateDrink(app, { id: drinkId } as Drink, requestDrink);
 
 		// Do we need to update the ingredients
 		if(request.body.ingredients) {

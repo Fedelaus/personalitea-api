@@ -1,17 +1,18 @@
 import Processor from "../core/processor/processor";
-import knex from 'knex';
+import Knex from 'knex';
 import { Client } from "pg";
 import { Drink } from "./drink.interface";
 import { IngredientsProcessor } from "../ingredients/ingredients.processor";
 import { link } from "fs";
 import { Ingredient } from "../ingredients/ingredient.interface";
+const knex = Knex({client: 'pg'})
 
 export class DrinksProcessor extends Processor {
 	
 	async createDrink(app: any, drink: Drink) {
 		const database = app.get('database') as Client;
 
-		const query = knex({client: 'pg'})
+		const query = knex
 			.table('drinks')
 			.insert(drink)
 			.returning('*')
@@ -20,25 +21,43 @@ export class DrinksProcessor extends Processor {
 		return database.query(query);
 	}
 
-	async getDrinks(app, drink: Drink, ingredientIds?: number[]) {
+	async getDrinks(app, drink: Drink) {
 		const database = app.get('database') as Client;
 		
-		let query = knex({client: 'pg'})
-			.table('drinks')
-			.select('*')
-			.innerJoin('drink_ingredients', {'drinks.id': 'drink_ingredients.drink_id'})
+		// Query grabs the appropriate values from both drink_ingredients
+		// and uses that information to build a json/array representation
+		// of our full drinks object.
+		let query = knex
+			.table('drinks as d')
+			.select('d.*', knex.raw('json_agg(ig) as ingredients'))
+			.leftOuterJoin('drink_ingredients as di', { 'di.drink_id':'d.id' })
+			.leftOuterJoin('ingredients as ig', { 'di.ingredient_id':'ig.id' })
+			.groupBy('d.id', 'd.name');
+		
+		// Filter the query by ingredients
+		if (drink.ingredients && drink.ingredients.length > 0) {
+			query.whereIn('ig.id', drink.ingredients);
+		}
 
-		console.log(query.toString());
+		// Remove the ingredients from the object as it doesn't actually directly
+		// exist there in the database.
+		delete drink.ingredients;
+		
+		// Add the where clauses with their prefixes.
+		Object.keys(drink).forEach(key => {
+			query.where(`d.${key}`, drink[key]);
+		});
 
+		// Return the results of this query.
 		return database.query(query.toString());
 	}
 
-	async updateDrink(app, drinkId: number, drink: Drink) {
+	async updateDrink(app, queryDrink: Drink, drink: Drink) {
 		const database = app.get('database') as Client;
 
-		const query = knex({client: 'pg'})
+		const query = knex
 			.table('drinks')
-			.where({ id: drinkId })
+			.where(queryDrink)
 			.update(drink)
 			.toString();	
 
@@ -48,7 +67,7 @@ export class DrinksProcessor extends Processor {
 	async deleteDrink(app, drinkId: number) {
 		const database = app.get('database') as Client;
 
-		const query = knex({client: 'pg'})
+		const query = knex
 			.table('drinks')
 			.delete()
 			.where({ id: drinkId })
@@ -60,7 +79,7 @@ export class DrinksProcessor extends Processor {
 	async createIngredientLinks(app, drink_id: number, ingredient_ids: number[]) {
 		const database = app.get('database') as Client;
 
-		const query = knex({client: 'pg'})
+		const query = knex
 			.table('drink_ingredients')
 			.insert(ingredient_ids.map(i_id => { return { drink_id: drink_id, ingredient_id: i_id} }))
 			.returning('*')
@@ -72,7 +91,7 @@ export class DrinksProcessor extends Processor {
 	async deleteIngredientLinks(app, drink_id: number) {
 		const database = app.get('database') as Client;
 
-		const query = knex({client: 'pg'})
+		const query = knex
 			.table('drink_ingredients')
 			.delete()
 			.where({ drink_id: drink_id})
