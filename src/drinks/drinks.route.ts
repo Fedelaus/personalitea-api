@@ -74,13 +74,17 @@ export class DrinksRoute extends Route {
 		response.send(databaseDrink);
 	}
 
-	@StripUnknown([], ['id', 'name', 'owner', 'ingredients'])
+	@StripUnknown(['id', 'name', 'owner', 'ingredients'], [])
 	async getDrinks(request: Request, response: Response) {
 		const app = request.app;
 
 		const drinksProcessor = app.get('drinks.processor') as DrinksProcessor;
 
-		const drinks = await drinksProcessor.getDrinks(app, request.body as Drink)
+		const drinkQuery = { id: request.query.id, name: request.query.name, owner: request.query.owner } as Drink;
+		
+		Object.keys(drinkQuery).forEach(k => { !drinkQuery[k] && delete drinkQuery[k] });
+
+		const drinks = await drinksProcessor.getDrinks(app, drinkQuery, request.query.ingredients);
 
 		response.send(drinks.rows);
 	}
@@ -92,9 +96,17 @@ export class DrinksRoute extends Route {
 
 		const drinkId : number = request.params.drinkId;
 
-		const updatedDrink = await drinksProcessor.updateDrink(app, drinkId, request.body as Drink);
+		const requestDrink = { name: request.body.name } as Drink;
 
-		const drink = updatedDrink.rows[0]
+		const updatedDrink = await drinksProcessor.updateDrink(app, drinkId, requestDrink);
+
+		// Do we need to update the ingredients
+		if(request.body.ingredients) {
+			await drinksProcessor.deleteIngredientLinks(app, drinkId);
+			await drinksProcessor.createIngredientLinks(app, drinkId, request.body.ingredients);
+		}
+
+		const drink = await drinksProcessor.getDrinkObject(app, { id: drinkId } as Drink);
 
 		response.send(drink);
 	}

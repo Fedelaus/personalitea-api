@@ -20,16 +20,17 @@ export class DrinksProcessor extends Processor {
 		return database.query(query);
 	}
 
-	async getDrinks(app, drink: Drink) {
+	async getDrinks(app, drink: Drink, ingredientIds?: number[]) {
 		const database = app.get('database') as Client;
-
-		const query = knex({client: 'pg'})
+		
+		let query = knex({client: 'pg'})
 			.table('drinks')
 			.select('*')
-			.where(drink)
-			.toString();	
+			.innerJoin('drink_ingredients', {'drinks.id': 'drink_ingredients.drink_id'})
 
-		return database.query(query);
+		console.log(query.toString());
+
+		return database.query(query.toString());
 	}
 
 	async updateDrink(app, drinkId: number, drink: Drink) {
@@ -63,6 +64,18 @@ export class DrinksProcessor extends Processor {
 			.table('drink_ingredients')
 			.insert(ingredient_ids.map(i_id => { return { drink_id: drink_id, ingredient_id: i_id} }))
 			.returning('*')
+			.toString();
+
+		return database.query(query);
+	}
+
+	async deleteIngredientLinks(app, drink_id: number) {
+		const database = app.get('database') as Client;
+
+		const query = knex({client: 'pg'})
+			.table('drink_ingredients')
+			.delete()
+			.where({ drink_id: drink_id})
 			.toString();
 
 		return database.query(query);
