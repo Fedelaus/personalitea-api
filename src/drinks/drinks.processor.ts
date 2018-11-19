@@ -59,7 +59,7 @@ export class DrinksProcessor extends Processor {
 			.table('drinks')
 			.where(queryDrink)
 			.update(drink)
-			.toString();	
+			.toString()
 
 		return database.query(query);
 	}

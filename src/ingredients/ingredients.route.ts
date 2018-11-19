@@ -7,7 +7,7 @@ import { BadRequestError } from "../core/errors/error.interface";
 
 export class IngredientsRoute extends Route {
 
-	// Configuration 
+	// Configuration
 	saltRounds: number = 10;
 
 	constructor() {
@@ -46,7 +46,7 @@ export class IngredientsRoute extends Route {
 
 	async createIngredient(request: Request, response: Response) {
 		const ingredientsProcessor = request.app.get('ingredients.processor') as IngredientsProcessor;
-		
+
 		const drink = { name: request.body.name, owner: request.app['token'].user.id } as Ingredient;
 
 		const insertResponse = await ingredientsProcessor.createIngredient(request.app, drink);
@@ -76,7 +76,7 @@ export class IngredientsRoute extends Route {
 		}
 
 		const updatedIngredient = await ingredientsProcessor.updateIngredients(request.app, ingredientId, ingredient);
-	
+
 		return response.send(updatedIngredient.rows[0]);
 	}
 

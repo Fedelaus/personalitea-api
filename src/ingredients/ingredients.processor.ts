@@ -1,11 +1,11 @@
-import Processor from "../core/processor/processor";
 import knex from 'knex';
-import { Client } from "pg";
-import { Ingredient } from "./ingredient.interface";
+import { Client } from 'pg';
+import Processor from '../core/processor/processor';
+import { Ingredient } from './ingredient.interface';
 
 export class IngredientsProcessor extends Processor {
 
-	async createIngredient(app: any, ingredient: Ingredient) {
+	public async createIngredient(app: any, ingredient: Ingredient) {
 		const database = app.get('database') as Client;
 
 		const query = knex({client: 'pg'})
@@ -18,32 +18,32 @@ export class IngredientsProcessor extends Processor {
 	}
 
 
-	async getIngredients(app, ingredient: Ingredient) {
+	public async getIngredients(app, ingredient: Ingredient) {
 		const database = app.get('database') as Client;
 
 		const query = knex({client: 'pg'})
 			.table('ingredients')
 			.select('*')
 			.where(ingredient)
-			.toString();	
+			.toString();
 
 
 		return database.query(query);
 	}
 
-	async updateIngredients(app, ingredientId: number, ingredient: Ingredient) {
+	public async updateIngredients(app, ingredientId: number, ingredient: Ingredient) {
 		const database = app.get('database') as Client;
 
 		const query = knex({client: 'pg'})
 			.table('ingredients')
 			.where({ id: ingredientId })
 			.update(ingredient)
-			.toString();	
+			.toString();
 
 		return database.query(query);
 	}
 
-	async deleteIngredient(app, ingredientId: number) {
+	public async deleteIngredient(app, ingredientId: number) {
 		const database = app.get('database') as Client;
 
 		const query = knex({client: 'pg'})
@@ -57,7 +57,7 @@ export class IngredientsProcessor extends Processor {
 		return database.query(query);
 	}
 
-	async getIngredientObject(app, ingredient: Ingredient) {
+	public async getIngredientObject(app, ingredient: Ingredient) {
 		const database = app.get('database') as Client;
 
 		const query = knex({client: 'pg'})
@@ -66,7 +66,7 @@ export class IngredientsProcessor extends Processor {
 
 		console.log(query);
 
-		return database.query(query); 
+		return database.query(query);
 	}
 
 }

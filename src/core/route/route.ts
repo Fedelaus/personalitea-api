@@ -30,8 +30,8 @@ export default class Route {
 
 		const token = request.headers.authorization.replace('Bearer ', '');
 
-		let isTokenValid; 
-		
+		let isTokenValid;
+
 		try {
 			isTokenValid = jwt.verify(token, 'SECRET');
 		} catch(error) {
@@ -44,7 +44,7 @@ export default class Route {
 
 		request['token'] = isTokenValid;
 
-		next();	
+		next();
 	}
 }
 
