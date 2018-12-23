@@ -8,7 +8,7 @@ async function main() {
       user: 'nathan',
       host: 'localhost',
       database: 'personalitea',
-      password: 'ilostit12'
+      password: ''
     }
   })
 
