@@ -20,7 +20,7 @@ async function connectDatabase() {
 		user: 'nathan',
 		host: 'localhost',
 		database: 'personalitea',
-		password: 'ilostit12',
+		password: '',
 	  });
 	
 	await client.connect();
