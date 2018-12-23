@@ -1,6 +1,6 @@
 {
   "name": "personalitea",
-  "version": "0.0.1",
+  "version":"1.0.0",
   "description": "API for managing drink preferences",
   "main": "index.js",
   "engines":{
