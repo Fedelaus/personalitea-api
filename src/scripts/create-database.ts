@@ -1,5 +1,4 @@
 import Knex from 'knex';
-import { S_IFBLK } from 'constants';
 
 async function main() {
   const knex = Knex({
