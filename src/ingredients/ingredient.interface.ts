@@ -3,3 +3,4 @@ export class Ingredient {
 	owner: number;
 	name: string;
 }
+// todo: rename this too desorption
