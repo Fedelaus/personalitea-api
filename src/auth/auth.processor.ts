@@ -1,5 +1,5 @@
 import Processor from "../core/processor/processor";
-import knex from 'knex';
+import Knex from 'knex';
 import { Client } from "pg";
 
 import { User } from "./user.description";
@@ -12,15 +12,13 @@ export class AuthProcessor extends Processor {
 	 * @param user User object to insert into the database.
 	 */
 	async createUser(app: any, user: User) {
-		const database = app.get('database') as Client;
+		const database = this.getDatabase(app);
 
-		const query = knex({client:'pg'})
-			.table('users')
+		const query = database('users')
 			.insert(user)
-			.returning('*')
-			.toString();
+			.returning(['id', 'username', 'email']);
 
-		return database.query(query);
+		return query;
 	}
 
 	/**
@@ -29,16 +27,16 @@ export class AuthProcessor extends Processor {
 	 * @param user Object to query a user with.
 	 */
 	async getUser(app: any, user: User) {
-		const database = app.get('database') as Client;
+		const database = app.get('database') as Knex;
 
-		const query = knex({client:'pg'})
-			.table('users')
+		const query = database('users')
 			.select('*')
 			.where(user)
-			.limit(1)
-			.toString();
+			.limit(1);
 
-		return database.query(query);
+		console.log(query.toString());
+
+		return query;
 	}
 	
 	/**
@@ -47,15 +45,13 @@ export class AuthProcessor extends Processor {
 	 * @param user User object to query with.
 	 */
 	async getUsers(app: any, user: User) {
-		const database = app.get('database') as Client;
+		const database = app.get('database') as Knex;
 
-		const query = knex({client:'pg'})
-			.table('users')
+		const query = database('users')
 			.select('*')
-			.where(user)
-			.toString();
+			.where(user);
 
-		return database.query(query);
+		return query;
 	}
 
 	/**
@@ -65,15 +61,13 @@ export class AuthProcessor extends Processor {
 	 * @param user The new information to provide for the user.
 	 */
 	async updateUser(app: any, userId: number, user: User) {
-		const database = app.get('database') as Client;
+		const database = app.get('database') as Knex;
 
-		const query = knex({client:'pg'})
-			.table('users')
+		const query = database('users')
 			.where({ id: userId })
-			.update(user)
-			.toString();
+			.update(user);
 
-		return database.query(query);
+		return query;
 	}
 
 }

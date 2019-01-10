@@ -47,6 +47,7 @@ export class AuthRoute extends Route {
 		try { 
 			return response.send(await authProcessor.createUser(request.app, user));	
 		} catch(error) {
+			console.log(error);
 			// TODO: pass errors to the error handler.
 			return (new EmailInUseError()).execute(response);
 		}
@@ -60,12 +61,13 @@ export class AuthRoute extends Route {
 		const user: User = { email: request.body.email } as User;
 
 		const databaseResponse = await authProcessor.getUser(request.app, user);
+
 		
-		if(databaseResponse.rowCount < 1) {
+		if(databaseResponse.length < 1) {
 			return (new MissingResourceError(user, { email: user.email })).execute(response);
 		}
 
-		const rows = databaseResponse.rows;
+		const rows = databaseResponse;
 		
 		const databaseUser: User = rows[0] as User;
 

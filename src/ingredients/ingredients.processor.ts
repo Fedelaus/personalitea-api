@@ -1,4 +1,4 @@
-import knex from 'knex';
+import knex, { QueryBuilder } from 'knex';
 import { Client } from 'pg';
 import Processor from '../core/processor/processor';
 import { Ingredient } from './ingredient.interface';
@@ -6,67 +6,46 @@ import { Ingredient } from './ingredient.interface';
 export class IngredientsProcessor extends Processor {
 
 	public async createIngredient(app: any, ingredient: Ingredient) {
-		const database = app.get('database') as Client;
+		const database = this.getDatabase(app);
 
-		const query = knex({client: 'pg'})
-			.table('ingredients')
+		const query = database('ingredients')
 			.insert(ingredient)
-			.returning('*')
-			.toString();
+			.returning('*');
 
-		return database.query(query);
+		return query;
 	}
 
 
 	public async getIngredients(app, ingredient: Ingredient) {
-		const database = app.get('database') as Client;
+		const database = this.getDatabase(app);
 
-		const query = knex({client: 'pg'})
-			.table('ingredients')
+		const query = database('ingredients')
 			.select('*')
 			.where(ingredient)
-			.toString();
 
 
-		return database.query(query);
+		return query;
 	}
 
 	public async updateIngredients(app, ingredientId: number, ingredient: Ingredient) {
-		const database = app.get('database') as Client;
+		const database = this.getDatabase(app);
 
-		const query = knex({client: 'pg'})
-			.table('ingredients')
+		const query = database('ingredients')
 			.where({ id: ingredientId })
 			.update(ingredient)
-			.toString();
 
-		return database.query(query);
+		return query;
 	}
 
 	public async deleteIngredient(app, ingredientId: number) {
-		const database = app.get('database') as Client;
+		const database = this.getDatabase(app);
 
-		const query = knex({client: 'pg'})
-			.table('ingredients')
+		const query = database('ingredients')
 			.delete()
 			.where({ id: ingredientId })
-			.toString();
 
 		// TODO: consider the links?
 
-		return database.query(query);
+		return query;
 	}
-
-	public async getIngredientObject(app, ingredient: Ingredient) {
-		const database = app.get('database') as Client;
-
-		const query = knex({client: 'pg'})
-			.table('ingredients')
-			.toString();
-
-		console.log(query);
-
-		return database.query(query);
-	}
-
 }

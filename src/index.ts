@@ -11,24 +11,11 @@ import { DrinksRoute } from './drinks/drinks.route';
 import { DrinksProcessor } from './drinks/drinks.processor';
 import { IngredientsRoute } from './ingredients/ingredients.route';
 import { IngredientsProcessor } from './ingredients/ingredients.processor';
+import { DatabaseSingleton } from './database';
 
 const LISTEN_PORT = 3000;
 
 
-async function connectDatabase() {
-	const client = new Client({
-		user: 'nathan',
-		host: 'localhost',
-		database: 'personalitea',
-		password: '',
-	  });
-	
-	await client.connect();
-
-
-
-	return client;
-}
 
 async function listenHTTP() {
 	const app = express();
@@ -65,7 +52,7 @@ async function listenHTTP() {
 }
 
 async function startApp() {
-	const database = await connectDatabase();
+	const database = DatabaseSingleton.connection;
 	const app = await listenHTTP();
 
 	app.set('database', database);

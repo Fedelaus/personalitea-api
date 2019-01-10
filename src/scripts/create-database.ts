@@ -4,10 +4,10 @@ async function main() {
   const knex = Knex({
     client: 'pg',
     connection: {
-      user: 'nathan',
+      user: 'postgres',
       host: 'localhost',
       database: 'personalitea',
-      password: ''
+      password: 'NoodleCup3'
     }
   })
 
@@ -15,9 +15,9 @@ async function main() {
   // Create users
   const userTableDefinition: TableDefinition = new TableDefinition(true,
     [
-      new RowDefinition(RowType.string, 'name'),
+      new RowDefinition(RowType.string, 'username'),
       new RowDefinition(RowType.string, 'email'),
-      new RowDefinition(RowType.integer, 'password'),
+      new RowDefinition(RowType.string, 'password'),
     ]
   );
 
@@ -45,15 +45,15 @@ async function main() {
     ]
   );
 
-  await createTable(knex, 'users_t', userTableDefinition);
-  await createTable(knex, 'drinks_t', drinksTableDefinition);
-  await createTable(knex, 'ingredients_t', ingredientsTableDefinition);
-  await createTable(knex, 'drink_ingredients_t', drinkIngredientsTableDefinition);
+  await createTable(knex, 'users', userTableDefinition);
+  await createTable(knex, 'drinks', drinksTableDefinition);
+  await createTable(knex, 'ingredients', ingredientsTableDefinition);
+  await createTable(knex, 'drink_ingredients', drinkIngredientsTableDefinition);
 
 // create relaltionships
 
-  await createRelationship(knex, new RowRelationship('drink_ingredients_t', 'drink_id', 'id', 'drinks_t', 'cascade'))
-  await createRelationship(knex, new RowRelationship('drink_ingredients_t', 'ingredient_id', 'id', 'ingredients_t', 'cascade'))
+  await createRelationship(knex, new RowRelationship('drink_ingredients', 'drink_id', 'id', 'drinks', 'cascade'))
+  await createRelationship(knex, new RowRelationship('drink_ingredients', 'ingredient_id', 'id', 'ingredients', 'cascade'))
 
   process.exit(0);
 };
