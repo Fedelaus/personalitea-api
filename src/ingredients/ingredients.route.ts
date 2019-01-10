@@ -47,11 +47,12 @@ export class IngredientsRoute extends Route {
 	async createIngredient(request: Request, response: Response) {
 		const ingredientsProcessor = request.app.get('ingredients.processor') as IngredientsProcessor;
 
-		const drink = { name: request.body.name, owner: request.app['token'].user.id } as Ingredient;
+
+		const drink = { name: request.body.name, owner: request['token'].user.id } as Ingredient;
 
 		const insertResponse = await ingredientsProcessor.createIngredient(request.app, drink);
 
-		return response.send(insertResponse.rows[0]);
+		return response.send(insertResponse[0]);
 	}
 
 	async getIngredients(request: Request, response: Response) {
@@ -59,7 +60,7 @@ export class IngredientsRoute extends Route {
 
 		const ingredients = await ingredientsProcessor.getIngredients(request.app, request.query as Ingredient)
 
-		return response.send(ingredients.rows);
+		return response.send(ingredients);
 	}
 
 	async updateIngredient(request: Request, response: Response) {
@@ -77,7 +78,7 @@ export class IngredientsRoute extends Route {
 
 		const updatedIngredient = await ingredientsProcessor.updateIngredients(request.app, ingredientId, ingredient);
 
-		return response.send(updatedIngredient.rows[0]);
+		return response.send(updatedIngredient[0]);
 	}
 
 	async deleteIngredient(request: Request, response: Response) {
@@ -87,6 +88,6 @@ export class IngredientsRoute extends Route {
 
 		const updatedIngredient = await ingredientsProcessor.deleteIngredient(request.app, ingredientId);
 
-		return response.send({ 'affected': updatedIngredient.rowCount });
+		return response.send({ 'affected': updatedIngredient.length });
 	}
 }

@@ -1,4 +1,4 @@
-import Knex from 'knex';
+import Knex, { CreateTableBuilder, TableBuilder } from 'knex';
 
 async function main() {
   const knex = Knex({
@@ -11,117 +11,92 @@ async function main() {
     }
   })
 
-
-  // Create users
-  const userTableDefinition: TableDefinition = new TableDefinition(true,
-    [
-      new RowDefinition(RowType.string, 'username'),
-      new RowDefinition(RowType.string, 'email'),
-      new RowDefinition(RowType.string, 'password'),
-    ]
-  );
-
-  // Create Drinks
-  const drinksTableDefinition: TableDefinition = new TableDefinition(true,
-    [
-      new RowDefinition(RowType.integer, 'owner'),
-      new RowDefinition(RowType.string, 'name'),
-    ]
-  );
-
-  // Create ingredients
-  const ingredientsTableDefinition: TableDefinition = new TableDefinition(true,
-    [
-      new RowDefinition(RowType.integer, 'owner'),
-      new RowDefinition(RowType.string, 'name'),
-    ]
-  );
-
-  // Create drink ingredients
-  const drinkIngredientsTableDefinition: TableDefinition = new TableDefinition(false,
-    [
-      new RowDefinition(RowType.integer, 'drink_id', { unsigned: true }),
-      new RowDefinition(RowType.integer, 'ingredient_id', { unsigned: true }),
-    ]
-  );
-
-  await createTable(knex, 'users', userTableDefinition);
-  await createTable(knex, 'drinks', drinksTableDefinition);
-  await createTable(knex, 'ingredients', ingredientsTableDefinition);
-  await createTable(knex, 'drink_ingredients', drinkIngredientsTableDefinition);
-
-// create relaltionships
-
-  await createRelationship(knex, new RowRelationship('drink_ingredients', 'drink_id', 'id', 'drinks', 'cascade'))
-  await createRelationship(knex, new RowRelationship('drink_ingredients', 'ingredient_id', 'id', 'ingredients', 'cascade'))
+  await createUsersTable(knex);
+  await createDrinksTable(knex);
+  await createIngredientsTable(knex);
+  await createDrinkIngredientsTable(knex);
+  await createRelationships(knex);
 
   process.exit(0);
 };
 
 
-// TODO: clean this shit up.
-async function createTable(knex: Knex, tableName: string, tableDefinition: TableDefinition) {
-  await knex.schema.hasTable(tableName).then(async (exists) => {
-    if (exists) {
-      console.log(`${tableName} already exists, not creating`);
-      return;
-    }
+async function createUsersTable(database: Knex) {
+  const tableName = 'users';
+  const hasTable = await database.schema.hasTable(tableName);
 
-    console.log(`Creating table: ${tableName}`);
+  if (hasTable) {
+    console.log(`${tableName} exists!`)
+    return;
+  }
 
-    await knex.schema.createTable(`public.${tableName}`, async (table: Knex.TableBuilder) => {
-      if (tableDefinition.hasId) {
-        table.increments('id').primary();
-      }
-      tableDefinition.rows.forEach(async (row: RowDefinition) => {
-        console.log(`Creating row: ${row.name}`);
-
-        const columnBuilder = table[row.type](row.name);
-
-        if (row.options.unsigned) {
-          columnBuilder.unsigned();
-        }
-      })
-    });
-  })
-}
-
-async function createRelationship(knex: Knex, rowRelationship: RowRelationship) {
-  console.log(`Creating relationship:
-  ##: ${rowRelationship.table}.${rowRelationship.column} -> ${rowRelationship.referenceTable}.${rowRelationship.referenceColumn}`);
-  await knex.schema.alterTable(rowRelationship.table, async (table) => {
-    await table
-      .foreign(rowRelationship.column)
-      .references(`${rowRelationship.referenceTable}.${rowRelationship.referenceColumn}`);
+  await database.schema.createTable(tableName, (tableBuilder: CreateTableBuilder) => {
+    tableBuilder.increments('id').primary();
+    tableBuilder.string('username').unique();
+    tableBuilder.string('password');
+    tableBuilder.string('email').unique();
   });
 }
 
-class TableDefinition {
-  constructor(public hasId: boolean, public rows: RowDefinition[]) {
+async function createDrinksTable(database: Knex) {
+  const tableName = 'drinks';
+  const hasTable = await database.schema.hasTable(tableName);
+
+  if (hasTable) {
+    console.log(`${tableName} exists!`)
+    return;
   }
+
+  await database.schema.createTable(tableName, (tableBuilder: CreateTableBuilder) => {
+    tableBuilder.increments('id').primary();
+    tableBuilder.string('name');
+    tableBuilder.integer('owner');
+  });
 }
 
-class RowDefinition {
-  constructor(public type: RowType, public name: string, public options: any= {}) {
+async function createIngredientsTable(database: Knex) {
+  const tableName = 'ingredients';
+  const hasTable = await database.schema.hasTable(tableName);
+
+  if (hasTable) {
+    console.log(`${tableName} exists!`)
+    return;
   }
+
+  await database.schema.createTable(tableName, (tableBuilder: CreateTableBuilder) => {
+    tableBuilder.increments('id').primary();
+    tableBuilder.string('name').unique();
+    tableBuilder.integer('owner');
+  });
 }
 
-enum RowType {
-  string = 'string',
-  integer = 'integer',
-  boolean = 'boolean'
+
+async function createDrinkIngredientsTable(database: Knex) {
+  const tableName = 'drink_ingredients';
+  const hasTable = await database.schema.hasTable(tableName);
+
+  if (hasTable) {
+    console.log(`${tableName} exists!`)
+    return;
+  }
+
+  await database.schema.createTable(tableName, (tableBuilder: CreateTableBuilder) => {
+    tableBuilder.integer('drink_id');
+    tableBuilder.integer('ingredient_id');
+  });
 }
 
-class RowRelationship {
-  constructor (
-    public table: string,
-    public column: string,
-    public referenceColumn: string,
-    public referenceTable: string,
-    public onDelete: string
-  ) { }
-}
+async function createRelationships(database: Knex) {
+  // Create drink_ingredients.drink_id -> drinks.id
+  await database.schema.alterTable('drink_ingredients', (tableBuilder: TableBuilder) => {
+    tableBuilder.foreign('drink_id').references('drinks.id');
+  });
 
+  // Create drink_ingredients.ingredients_id -> ingredients.id
+  await database.schema.alterTable('drink_ingredients', (tableBuilder: TableBuilder) => {
+    tableBuilder.foreign('ingredient_id').references('ingredients.id');
+  });
+}
 
 
 main();
