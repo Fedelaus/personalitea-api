@@ -13,6 +13,12 @@ export class Group {
     groupPermissions?: GroupPermission[];
 };
 
+export class GroupUser {
+    id?: number;
+    user?: number;
+    group?: number;
+}
+
 export interface GroupPermission {
     /** Unique identifier of the permission */
     id: number;
