@@ -120,6 +120,6 @@ export class DrinksRoute extends Route {
 
 		const deletedDrink = await drinksProcessor.deleteDrink(app, drinkId);
 
-		response.send({ 'affected': deletedDrink.rowCount});
+		response.send({ 'affected': deletedDrink.rowCount });
 	}
 }
