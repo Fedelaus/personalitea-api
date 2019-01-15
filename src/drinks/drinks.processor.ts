@@ -51,15 +51,13 @@ export class DrinksProcessor extends Processor {
 	}
 
 	async updateDrink(app, queryDrink: Drink, drink: Drink) {
-		const database = app.get('database') as Client;
+		const database = this.getDatabase(app);
 
-		const query = knex
-			.table('drinks')
+		const query = database('drinks')
 			.where(queryDrink)
-			.update(drink)
-			.toString()
+			.update(drink);
 
-		return database.query(query);
+		return query;
 	}
 
 	async deleteDrink(app, drinkId: number) {

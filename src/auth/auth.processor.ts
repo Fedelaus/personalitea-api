@@ -27,14 +27,12 @@ export class AuthProcessor extends Processor {
 	 * @param user Object to query a user with.
 	 */
 	async getUser(app: any, user: User) {
-		const database = app.get('database') as Knex;
+		const database = this.getDatabase(app);
 
 		const query = database('users')
 			.select('*')
 			.where(user)
 			.limit(1);
-
-		console.log(query.toString());
 
 		return query;
 	}
@@ -45,7 +43,7 @@ export class AuthProcessor extends Processor {
 	 * @param user User object to query with.
 	 */
 	async getUsers(app: any, user: User) {
-		const database = app.get('database') as Knex;
+		const database = this.getDatabase(app);
 
 		const query = database('users')
 			.select('*')
@@ -61,7 +59,7 @@ export class AuthProcessor extends Processor {
 	 * @param user The new information to provide for the user.
 	 */
 	async updateUser(app: any, userId: number, user: User) {
-		const database = app.get('database') as Knex;
+		const database = this.getDatabase(app);
 
 		const query = database('users')
 			.where({ id: userId })
@@ -69,5 +67,7 @@ export class AuthProcessor extends Processor {
 
 		return query;
 	}
+
+	
 
 }

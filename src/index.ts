@@ -7,10 +7,16 @@ import { Client } from 'pg';
 
 import { AuthProcessor } from './auth/auth.processor';
 import { AuthRoute } from './auth/auth.route';
+
 import { DrinksRoute } from './drinks/drinks.route';
 import { DrinksProcessor } from './drinks/drinks.processor';
+
 import { IngredientsRoute } from './ingredients/ingredients.route';
 import { IngredientsProcessor } from './ingredients/ingredients.processor';
+
+import { GroupsRoute } from './groups/groups.route';
+import { GroupsProcessor } from './groups/groups.processor';
+
 import { DatabaseSingleton } from './database';
 
 const LISTEN_PORT = 3000;
@@ -45,6 +51,11 @@ async function listenHTTP() {
 	app.use('/', ingredientsRoute.router);
 	app.set('ingredients.route', ingredientsRoute);
 	app.set('ingredients.processor', new IngredientsProcessor());
+
+	const groupsRoute = new GroupsRoute();
+	app.use('/', groupsRoute.router);
+	app.set('groups.route', groupsRoute);
+	app.set('groups.processor', new GroupsProcessor());
 	
 	app.listen(LISTEN_PORT, () => console.log(`Listening on port ${LISTEN_PORT}`));
 
