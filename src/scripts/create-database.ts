@@ -7,7 +7,7 @@ async function main() {
       user: 'postgres',
       host: 'localhost',
       database: 'personalitea',
-      password: 'NoodleCup3'
+      password: ''
     }
   })
 
