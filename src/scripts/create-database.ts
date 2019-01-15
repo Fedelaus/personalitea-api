@@ -7,7 +7,7 @@ async function main() {
       user: 'postgres',
       host: 'localhost',
       database: 'personalitea',
-      password: ''
+      password: 'NoodleCup3'
     }
   })
 
@@ -106,6 +106,7 @@ async function createGroupUsersTable(database: Knex) {
   return database.schema.createTable('group_users', (tableBuilder: TableBuilder) => {
     tableBuilder.increments('id').primary();
     tableBuilder.integer('user');
+    tableBuilder.integer('group');
   });
 } 
 
@@ -155,6 +156,7 @@ async function createRelationships(database: Knex) {
 
   return database.schema.alterTable('group_users', (tableBuilder: TableBuilder) => {
     tableBuilder.foreign('user').references('users.id');
+    tableBuilder.foreign('group').references('groups.id');
   });
 }
 
