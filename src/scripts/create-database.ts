@@ -8,7 +8,7 @@ async function main() {
   const knex = Knex({
     client: 'pg',
     connection: {
-      user: args.user,
+      user: args.username,
       host: args.hostname,
       database: args.database,
       password: args.password
