@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -w",
-    "start": "tsc && node ./build/index.js --username=$DATABASE_USERNAME --password=$DATABASE_PASSWORD --hostname=$DATABASE_URL --database=$DATABASE_NAME"
+    "start": "./node_modules/typescript/bin/tsc && node ./build/index.js --username=$DATABASE_USERNAME --password=$DATABASE_PASSWORD --hostname=$DATABASE_URL --database=$DATABASE_NAME"
   },
   "author": "",
   "license": "ISC",
@@ -26,5 +26,8 @@
     "minimist": "^1.2.0",
     "pg": "^7.6.0",
     "source-map-support": "^0.5.9"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.1"
   }
 }
