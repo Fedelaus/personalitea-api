@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "postinstall": "npm run build",
+    "postinstall": "npm run createdb && npm run build",
+    "createdb": "node build/scripts/create-database.js --username=$DATABASE_USERNAME --password=$DATABASE_PASSWORD --hostname=$DATABASE_URL --database=$DATABASE_NAME",
     "start": "node ./build/index.js --username=$DATABASE_USERNAME --password=$DATABASE_PASSWORD --hostname=$DATABASE_URL --database=$DATABASE_NAME"
   },
   "author": "",
