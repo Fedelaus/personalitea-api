@@ -8,8 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -w",
-    "start": "./node_modules/typescript/bin/tsc && node ./build/index.js --username=$DATABASE_USERNAME --password=$DATABASE_PASSWORD --hostname=$DATABASE_URL --database=$DATABASE_NAME"
+    "build": "tsc",
+    "postinstall": "npm run build",
+    "start": "node ./build/index.js --username=$DATABASE_USERNAME --password=$DATABASE_PASSWORD --hostname=$DATABASE_URL --database=$DATABASE_NAME"
   },
   "author": "",
   "license": "ISC",
