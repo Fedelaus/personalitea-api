@@ -1,13 +1,17 @@
 import Knex, { CreateTableBuilder, TableBuilder } from 'knex';
+import minimist from 'minimist';
+
+const args = minimist(process.argv.splice(2));
+
 
 async function main() {
   const knex = Knex({
     client: 'pg',
     connection: {
-      user: 'postgres',
-      host: 'localhost',
-      database: 'personalitea',
-      password: 'NoodleCup3'
+      user: args.user,
+      host: args.hostname,
+      database: args.database,
+      password: args.password
     }
   })
 
