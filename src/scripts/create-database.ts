@@ -1,19 +1,13 @@
 import Knex, { CreateTableBuilder, TableBuilder } from 'knex';
 import minimist from 'minimist';
+import { DatabaseSingleton } from './../database';
+
 
 const args = minimist(process.argv.splice(2));
 
 
 async function main() {
-  const knex = Knex({
-    client: 'pg',
-    connection: {
-      user: args.username,
-      host: args.hostname,
-      database: args.database,
-      password: args.password
-    }
-  })
+  const knex = DatabaseSingleton.connection;
 
   await createUsersTable(knex);
   await createDrinksTable(knex);
