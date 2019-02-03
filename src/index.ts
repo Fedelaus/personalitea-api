@@ -29,8 +29,9 @@ async function listenHTTP() {
 	// Middleware
 
 	app.use(function(req, res, next) {
+		console.log(req.url);
 		res.header("Access-Control-Allow-Origin", "*");
-		res.header("Access-Control-Allow-Headers", "*");
+		res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 		next();
 	});
 
