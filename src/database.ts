@@ -24,7 +24,7 @@ export class DatabaseConnection {
 			connection: {
 				user: this.username,
 				host: this.hostname,
-				database: `${this.database}?ssl=true`,
+				database: this.database,
 				password: this.password,
 				port: this.port
 			},
