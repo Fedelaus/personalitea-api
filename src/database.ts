@@ -40,5 +40,6 @@ export const DatabaseSingleton = new DatabaseConnection(
 	args.username,
 	args.password,
 	args.hostname,
-	args.database
+	args.database,
+	args.db_port
 );
