@@ -23,7 +23,7 @@ export class DatabaseConnection {
 			connection: {
 				user: this.username,
 				host: this.hostname,
-				database: this.database,
+				database: `${this.database}?ssl=true`,
 				password: this.password
 			},
 
@@ -35,4 +35,9 @@ export class DatabaseConnection {
 const args = minimist(process.argv.splice(2));
 
 // Export this connection so it can be used everywhere.
-export const DatabaseSingleton = new DatabaseConnection(args.username, args.password, args.hostname, args.database);
+export const DatabaseSingleton = new DatabaseConnection(
+	args.username,
+	args.password,
+	args.hostname,
+	args.database
+);
