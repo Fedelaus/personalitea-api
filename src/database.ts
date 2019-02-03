@@ -1,5 +1,7 @@
 import Knex from 'knex';
 import minimist from 'minimist';
+import pg from 'pg';
+pg.defaults.ssl = true;
 
 export class DatabaseConnection {
 
