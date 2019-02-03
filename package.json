@@ -10,8 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "postinstall": "npm run build && npm run createdb",
-    "createdb": "node build/scripts/create-database.js --username=$DATABASE_USERNAME --password=$DATABASE_PASSWORD --hostname=$DATABASE_HOST --database=$DATABASE_NAME",
-    "start": "node ./build/index.js --username=$DATABASE_USERNAME --password=$DATABASE_PASSWORD --hostname=$DATABASE_HOST --database=$DATABASE_NAME"
+    "createdb": "node build/scripts/create-database.js --username=$DATABASE_USERNAME --password=$DATABASE_PASSWORD --hostname=$DATABASE_HOST --database=$DATABASE_NAME --db_port=$DATABASE_PORT",
+    "start": "node ./build/index.js --username=$DATABASE_USERNAME --password=$DATABASE_PASSWORD --hostname=$DATABASE_HOST --database=$DATABASE_NAME --db_port=$DATABASE_PORT"
   },
   "author": "",
   "license": "ISC",

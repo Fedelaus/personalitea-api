@@ -9,7 +9,8 @@ export class DatabaseConnection {
 		public username: string,
 		public password: string,
 		public hostname: string,
-		public database: string
+		public database: string,
+		public port: string
 	) {
 		this.connect().then(v => {
 			console.log(v);
@@ -24,9 +25,9 @@ export class DatabaseConnection {
 				user: this.username,
 				host: this.hostname,
 				database: `${this.database}?ssl=true`,
-				password: this.password
+				password: this.password,
+				port: this.port
 			},
-
 		});
 	}
 }
