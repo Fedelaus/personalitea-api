@@ -19,7 +19,7 @@ import { GroupsProcessor } from './groups/groups.processor';
 
 import { DatabaseSingleton } from './database';
 
-const LISTEN_PORT = 3000;
+const LISTEN_PORT = 80;
 
 
 
