@@ -80,8 +80,6 @@ export class DrinksRoute extends Route {
 
 		const drinkQuery = request.query as Drink;
 
-		console.log(drinkQuery.ingredients);
-
 		const drinks = await drinksProcessor.getDrinks(app, drinkQuery);
 
 		response.send(drinks.rows);

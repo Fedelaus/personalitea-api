@@ -46,7 +46,7 @@ export class AuthRoute extends Route {
 		try { 
 			return response.send(await authProcessor.createUser(request.app, user));	
 		} catch(error) {
-			console.log(error);
+			console.debug(error);
 			// TODO: pass errors to the error handler.
 			return (new EmailInUseError()).execute(response);
 		}

@@ -15,12 +15,10 @@ export class DatabaseConnection {
 		public port: string
 	) {
 		this.connect().then(v => {
-			console.log(v);
-		}).catch(e => console.log);	
+		}).catch(e => console.debug(e));	
 	}
 
 	async connect() {
-		console.log(this);
 		this.connection = Knex({
 			client: 'pg',
 			connection: {
