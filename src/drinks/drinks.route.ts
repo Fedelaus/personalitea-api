@@ -2,9 +2,7 @@ import Route from "../core/route/route";
 import { Request, Response } from "express";
 import { Drink } from "./drink.interface";
 import { DrinksProcessor } from "./drinks.processor";
-import { IngredientsProcessor } from "../ingredients/ingredients.processor";
-import { Ingredient } from "../ingredients/ingredient.interface";
-import { StripUnknown, Validate } from "../core/route/validation.decorators";
+import { StripUnknown } from "../core/route/validation.decorators";
 
 export class DrinksRoute extends Route {
 
@@ -81,8 +79,6 @@ export class DrinksRoute extends Route {
 		const drinksProcessor = app.get('drinks.processor') as DrinksProcessor;
 
 		const drinkQuery = request.query as Drink;
-
-		console.log(drinkQuery.ingredients);
 
 		const drinks = await drinksProcessor.getDrinks(app, drinkQuery);
 

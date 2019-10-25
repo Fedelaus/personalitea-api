@@ -2,7 +2,6 @@ import Route from "../core/route/route";
 import { Request, Response } from "express";
 import { IngredientsProcessor } from "./ingredients.processor";
 import { Ingredient } from "./ingredient.interface";
-import { StripUnknown } from "../core/route/validation.decorators";
 import { BadRequestError } from "../core/errors/error.interface";
 
 export class IngredientsRoute extends Route {

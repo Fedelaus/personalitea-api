@@ -3,7 +3,6 @@ import 'source-map-support/register'
 
 import express from 'express';
 import bodyParser from 'body-parser';
-import { Client } from 'pg';
 
 import { AuthProcessor } from './auth/auth.processor';
 import { AuthRoute } from './auth/auth.route';
@@ -29,7 +28,6 @@ async function listenHTTP() {
 	// Middleware
 
 	app.use(function(req, res, next) {
-		console.log(req.url);
 		res.header("Access-Control-Allow-Origin", "*");
 		res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 		next();
@@ -58,7 +56,7 @@ async function listenHTTP() {
 	app.set('groups.route', groupsRoute);
 	app.set('groups.processor', new GroupsProcessor());
 	
-	app.listen(LISTEN_PORT, () => console.log(`Listening on port ${LISTEN_PORT}`));
+  app.listen(LISTEN_PORT, () => console.debug(`Listening on port ${LISTEN_PORT}`));
 
 	return app;
 }

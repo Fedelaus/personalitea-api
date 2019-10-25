@@ -1,10 +1,6 @@
 import Processor from "../core/processor/processor";
 import Knex from 'knex';
-import { Client } from "pg";
 import { Drink } from "./drink.interface";
-import { IngredientsProcessor } from "../ingredients/ingredients.processor";
-import { link } from "fs";
-import { Ingredient } from "../ingredients/ingredient.interface";
 const knex = Knex({client: 'pg'})
 
 export class DrinksProcessor extends Processor {

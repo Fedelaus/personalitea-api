@@ -1,10 +1,5 @@
 import Knex, { CreateTableBuilder, TableBuilder } from 'knex';
-import minimist from 'minimist';
 import { DatabaseSingleton } from './../database';
-
-
-const args = minimist(process.argv.splice(2));
-
 
 async function main() {
   const knex = DatabaseSingleton.connection;
@@ -28,7 +23,7 @@ async function createUsersTable(database: Knex) {
   const hasTable = await database.schema.hasTable(tableName);
 
   if (hasTable) {
-    console.log(`${tableName} exists!`)
+    console.debug(`${tableName} exists!`)
     return;
   }
 
@@ -45,7 +40,7 @@ async function createDrinksTable(database: Knex) {
   const hasTable = await database.schema.hasTable(tableName);
 
   if (hasTable) {
-    console.log(`${tableName} exists!`)
+    console.debug(`${tableName} exists!`)
     return;
   }
 
@@ -61,7 +56,7 @@ async function createIngredientsTable(database: Knex) {
   const hasTable = await database.schema.hasTable(tableName);
 
   if (hasTable) {
-    console.log(`${tableName} exists!`)
+    console.debug(`${tableName} exists!`)
     return;
   }
 
@@ -78,7 +73,7 @@ async function createDrinkIngredientsTable(database: Knex) {
   const hasTable = await database.schema.hasTable(tableName);
 
   if (hasTable) {
-    console.log(`${tableName} exists!`)
+    console.debug(`${tableName} exists!`)
     return;
   }
 

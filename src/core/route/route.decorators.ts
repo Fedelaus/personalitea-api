@@ -7,7 +7,6 @@ export function Router<TFunction extends Function>(target: Function) {
 
 	function newConstructor(...args: any[]) {
 		const route: any = instanciate(originalConstructor, args);
-		console.log('route', route);
 		return route;
 	}
 

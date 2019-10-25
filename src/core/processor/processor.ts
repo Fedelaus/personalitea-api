@@ -1,4 +1,3 @@
-import { Client, QueryResult } from "pg";
 import Knex from 'knex';
 
 export default class Processor {
