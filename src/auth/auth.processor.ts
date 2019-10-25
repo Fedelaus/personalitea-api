@@ -1,6 +1,4 @@
 import Processor from "../core/processor/processor";
-import Knex from 'knex';
-import { Client } from "pg";
 
 import { User } from "./user.description";
 

@@ -1,10 +1,5 @@
 import Knex, { CreateTableBuilder, TableBuilder } from 'knex';
-import minimist from 'minimist';
 import { DatabaseSingleton } from './../database';
-
-
-const args = minimist(process.argv.splice(2));
-
 
 async function main() {
   const knex = DatabaseSingleton.connection;

@@ -3,10 +3,9 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import Route from "../core/route/route";
-import { Router, Endpoint } from "../core/route/route.decorators";
 
 import { AuthProcessor } from "./auth.processor";
-import { User, UserToken } from "./user.description";
+import { User } from "./user.description";
 import { MissingResourceError, BadAuthenticationError, EmailInUseError } from "../core/errors/error.interface";
 import { StripUnknown } from "../core/route/validation.decorators";
 

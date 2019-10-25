@@ -3,7 +3,6 @@ import 'source-map-support/register'
 
 import express from 'express';
 import bodyParser from 'body-parser';
-import { Client } from 'pg';
 
 import { AuthProcessor } from './auth/auth.processor';
 import { AuthRoute } from './auth/auth.route';

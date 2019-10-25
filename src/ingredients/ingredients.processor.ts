@@ -1,5 +1,3 @@
-import knex, { QueryBuilder } from 'knex';
-import { Client } from 'pg';
 import Processor from '../core/processor/processor';
 import { Ingredient } from './ingredient.interface';
 
